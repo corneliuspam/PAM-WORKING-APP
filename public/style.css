@@ -12,6 +12,7 @@ body {
   overflow: hidden;
 }
 
+
 #tickerContent {
   display: inline-block;
   animation: ticker 15s linear infinite;
@@ -477,4 +478,27 @@ body.light .modalBox {
   padding: 0;                /* remove extra vertical padding */
   box-sizing: border-box;
   font-size: 0.9em;
+}
+
+/* Active Users Ticker */
+.activeUsersTicker {
+  position: relative;       /* allow overlay on top of dashboard */
+  z-index: 10;              /* ensure it stays above chat background */
+  width: 100%;
+  overflow: hidden;
+  background: transparent;  /* remove white background */
+  border: none;             /* remove border if any */
+  white-space: nowrap;
+  padding: 0;               /* remove vertical padding */
+  margin: 0;                /* remove default margin */
+  box-sizing: border-box;
+  font-size: 0.9em;
+}
+
+/* Ticker content */
+#tickerContent {
+  display: inline-block;
+  animation: ticker 15s linear infinite;
+  background: transparent;  /* ensure content has no background */
+  padding: 5px 0;           /* optional small padding inside ticker */
 }
