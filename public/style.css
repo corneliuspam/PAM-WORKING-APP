@@ -453,3 +453,11 @@ body.light .modalBox {
   border-radius: 50%;
   margin-right: 5px;
 }
+
+.msgImage {
+  max-width: 150px;
+  max-height: 150px;
+  margin-top: 5px;
+  border-radius: 8px;
+  display: block;
+}
