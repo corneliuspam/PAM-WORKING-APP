@@ -12,8 +12,8 @@ const closeAbout = document.getElementById("closeAbout");
 const tickerContent = document.getElementById("tickerContent");
 
 // ===== USER DATA =====
-const username = localStorage.getItem("user");
-const photo = localStorage.getItem("photo");
+let username = localStorage.getItem("user");
+let photo = localStorage.getItem("photo");
 
 // ===== SAFETY CHECK =====
 if (!username) window.location.href = "/";
@@ -59,7 +59,7 @@ function sendMessage() {
   const data = {
     username,
     message: text,
-    image: null, // optionally set image URL
+    image: null,
     time: new Date().toLocaleTimeString()
   };
 
@@ -146,8 +146,12 @@ function updateTicker(users) {
   });
 }
 
-// ===== SAMPLE: simulate active users =====
-updateTicker([{username,'Alice',photo:'/default.png'}, {username,'Bob',photo:'/default.png'}, {username,photo}]);
+// ===== SAMPLE ACTIVE USERS =====
+updateTicker([
+  { username: username, photo: photo },
+  { username: "Alice", photo: "/default.png" },
+  { username: "Bob", photo: "/default.png" }
+]);
 
 // ===== USER STATUS TOGGLE =====
 const statusToggle = document.getElementById("statusToggle");
@@ -177,6 +181,7 @@ document.getElementById("changeUsernameBtn").addEventListener("click", () => {
   const newName = document.getElementById("newUsername").value.trim();
   if (!newName) return;
   localStorage.setItem("user", newName);
+  username = newName;
   document.getElementById("usernameDisplay").textContent = newName;
   alert("Username updated!");
   settingsModal.style.display = "none";
