@@ -186,3 +186,41 @@ document.getElementById("changeUsernameBtn").addEventListener("click", () => {
   alert("Username updated!");
   settingsModal.style.display = "none";
 });
+
+// ===== IMAGE UPLOADER =====
+const imageBtn = document.getElementById("imageBtn");
+const imageInput = document.getElementById("imageInput");
+
+// Open file selector
+imageBtn.addEventListener("click", () => {
+  imageInput.click();
+});
+
+// When user selects image
+imageInput.addEventListener("change", (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = function(evt) {
+    const base64 = evt.target.result;
+
+    const data = {
+      username,
+      message: "", // optional text with image
+      image: base64,
+      time: new Date().toLocaleTimeString()
+    };
+
+    // Render locally
+    renderMessage(data, true);
+
+    // Send via socket
+    socket.emit("chat message", data);
+  };
+
+  reader.readAsDataURL(file);
+
+  // Clear input for next image
+  imageInput.value = "";
+});
