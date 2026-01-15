@@ -502,3 +502,20 @@ body.light .modalBox {
   background: transparent;  /* ensure content has no background */
   padding: 5px 0;           /* optional small padding inside ticker */
 }
+
+/* Remove the white background for the Online Users panel */
+.onlineUsers {
+  background: transparent;   /* remove default white */
+  border: none;              /* remove border if any */
+  padding: 0;                /* remove padding */
+  margin: 0;                 /* remove margin */
+  box-shadow: none;          /* remove any shadow */
+}
+
+/* Optional: remove the “Online Users” text if you don’t want it */
+.onlineUsers h4 {
+  display: none;             /* hide the heading */
+  margin: 0;
+  padding: 0;
+  font-size: 0;
+}
