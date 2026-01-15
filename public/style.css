@@ -12,6 +12,11 @@ body {
   overflow: hidden;
 }
 
+#tickerContent {
+  display: inline-block;
+  animation: ticker 15s linear infinite;
+  background: transparent;   /* ensure content has no extra background */
+}
 body.light {
   background: #f0f2f5;
   color: #000;
