@@ -1,0 +1,421 @@
+/* ===== RESET ===== */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: "Segoe UI", Roboto, Arial, sans-serif;
+  background: #0b141a;
+  color: #e9edef;
+  height: 100dvh;
+  overflow: hidden;
+}
+
+body.light {
+  background: #f0f2f5;
+  color: #000;
+}
+
+/* ===== APP LAYOUT ===== */
+.app {
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden; /* 🔑 CRITICAL */
+}
+
+/* ===== HEADER ===== */
+header {
+  height: 64px;
+  padding: 0 14px;
+  background: #111b21;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+  z-index: 10;
+}
+
+body.light header {
+  background: #ffffff;
+}
+
+header .left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+header .left img {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+#usernameDisplay {
+  font-weight: 600;
+}
+
+#status {
+  font-size: 12px;
+  color: #25d366;
+}
+
+header .right button {
+  border: none;
+  background: #25d366;
+  color: #fff;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  font-size: 16px;
+  margin-left: 8px;
+  cursor: pointer;
+}
+
+/* ===== CHAT AREA ===== */
+.chatContainer {
+  flex: 1;
+  min-height: 0; /* 🔑 VERY IMPORTANT */
+  padding: 12px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: linear-gradient(
+    180deg,
+    #0b141a 0%,
+    #0f1b24 50%,
+    #0b141a 100%
+  );
+}
+
+body.light .chatContainer {
+  background: #e5ddd5;
+}
+
+/* ===== MESSAGE ROW ===== */
+.me,
+.other {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  max-width: 100%;
+}
+
+.me {
+  justify-content: flex-end;
+}
+
+.other {
+  justify-content: flex-start;
+}
+
+/* ===== AVATAR ===== */
+.avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+/* ===== MESSAGE BUBBLE ===== */
+.bubble {
+  max-width: 72%;
+  padding: 8px 12px;
+  border-radius: 16px;
+  font-size: 14px;
+  line-height: 1.4;
+  display: flex;
+  flex-direction: column;
+  word-wrap: break-word;
+}
+
+/* My messages */
+.me .bubble {
+  background: #25d366;
+  color: #000;
+  border-bottom-right-radius: 4px;
+}
+
+/* Others */
+.other .bubble {
+  background: #2a3942;
+  color: #fff;
+  border-bottom-left-radius: 4px;
+}
+
+body.light .me .bubble {
+  background: #dcf8c6;
+}
+
+body.light .other .bubble {
+  background: #ffffff;
+  color: #000;
+}
+
+/* ===== TIMESTAMP ===== */
+.time {
+  font-size: 10px;
+  opacity: 0.6;
+  margin-top: 4px;
+  align-self: flex-end;
+}
+
+/* ===== INPUT BAR ===== */
+.inputBox {
+  height: 64px;
+  flex-shrink: 0; /* 🔑 Prevent shrinking */
+  padding: 10px;
+  display: flex;
+  gap: 8px;
+  background: #111b21;
+  border-top: 1px solid rgba(255,255,255,0.05);
+}
+
+body.light .inputBox {
+  background: #ffffff;
+}
+
+.inputBox input {
+  flex: 1;
+  padding: 12px 16px;
+  border-radius: 25px;
+  border: none;
+  outline: none;
+  font-size: 14px;
+  background: #1f2c34;
+  color: #fff;
+}
+
+body.light .inputBox input {
+  background: #f0f2f5;
+  color: #000;
+}
+
+.inputBox button {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  border: none;
+  background: #25d366;
+  color: #fff;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+/* ===== FLOATING ACTION BAR ===== */
+.floatingBar {
+  position: fixed;
+  bottom: 80px;
+  right: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.floatingBar button {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  border: none;
+  background: #25d366;
+  color: #fff;
+  font-size: 20px;
+  cursor: pointer;
+  box-shadow: 0 6px 14px rgba(0,0,0,0.35);
+}
+
+/* ===== MODAL (ABOUT) ===== */
+.modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.65);
+  justify-content: center;
+  align-items: center;
+  z-index: 99;
+}
+
+.modalBox {
+  background: #111b21;
+  padding: 20px;
+  border-radius: 14px;
+  width: 85%;
+  max-width: 320px;
+  text-align: center;
+  position: relative;
+}
+
+body.light .modalBox {
+  background: #ffffff;
+  color: #000;
+}
+
+.modalBox span {
+  position: absolute;
+  top: 10px;
+  right: 14px;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+/* ===== LOGIN PAGE ===== */
+.loginBody {
+  height: 100dvh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(135deg, #0b141a, #111b21);
+}
+
+.loginBox {
+  width: 320px;
+  padding: 26px;
+  border-radius: 18px;
+  background: #111b21;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.4);
+  text-align: center;
+}
+
+.loginBox h2 {
+  margin-bottom: 14px;
+}
+
+.loginAvatar {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 12px;
+}
+
+.loginBox input {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 25px;
+  border: none;
+  outline: none;
+  margin-bottom: 12px;
+}
+
+.loginBox button {
+  width: 100%;
+  padding: 12px;
+  border-radius: 25px;
+  border: none;
+  background: #25d366;
+  color: #fff;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+/* Modal background */
+.modal {
+  display: none; /* hidden by default */
+  position: fixed;
+  z-index: 9999;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100dvh;
+  background-color: rgba(0,0,0,0.6);
+  justify-content: center;
+  align-items: center;
+}
+
+/* Modal content */
+.modalContent {
+  background-color: #0b141a; /* Dark modal */
+  padding: 20px;
+  border-radius: 12px;
+  text-align: center;
+  color: #fff;
+  width: 80%;
+  max-width: 300px;
+}
+
+/* Close button */
+.closeBtn {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  font-size: 28px;
+  cursor: pointer;
+}
+
+/* Large avatar */
+.largeAvatar {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  margin-bottom: 15px;
+  object-fit: cover;
+}
+
+.profileBio {
+  font-size: 14px;
+  opacity: 0.85;
+  margin: 10px 0;
+}
+
+.editBioBtn {
+  background: #25d366;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 20px;
+  color: #000;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+#bioEditor textarea {
+  width: 100%;
+  height: 60px;
+  margin-top: 10px;
+  border-radius: 8px;
+  border: none;
+  padding: 8px;
+  resize: none;
+}
+
+.onlineUsers {
+  padding: 10px;
+  background: #f1f1f1;
+  border-bottom: 1px solid #ddd;
+  font-size: 0.9em;
+}
+
+.onlineUsers ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.onlineUsers li {
+  margin: 4px 0;
+}
+
+.deleteMsgBtn {
+  margin-left: 5px;
+  font-size: 0.7em;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.scrollBottom {
+  position: fixed;
+  bottom: 80px;
+  right: 20px;
+  padding: 8px;
+  border-radius: 50%;
+  background: #007bff;
+  color: white;
+  border: none;
+  cursor: pointer;
+  display: none;
+}

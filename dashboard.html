@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PAM Chat Dashboard</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="app">
+
+  <header>
+    <div class="left">
+      <img id="userPic" class="profileIcon" src="">
+      <div>
+        <div id="usernameDisplay"></div>
+        <small id="status">● Offline</small>
+      </div>
+      <!-- NEW: User Status Toggle -->
+      <select id="statusToggle">
+        <option value="Online">Online</option>
+        <option value="Away">Away</option>
+        <option value="Offline">Offline</option>
+      </select>
+    </div>
+
+    <div class="right">
+      <button id="themeToggle">🌙</button>
+      <button id="aboutBtn">ℹ️</button>
+    </div>
+  </header>
+
+  <!-- NEW: Online Users List -->
+  <div id="onlineUsers" class="onlineUsers">
+    <h4>Online Users</h4>
+    <ul id="onlineList"></ul>
+  </div>
+
+  <div id="chat" class="chatContainer"></div>
+
+  <div class="inputBox">
+    <!-- NEW: Emoji Button -->
+    <button id="emojiBtn">😊</button>
+    <input id="msg" placeholder="Type a message">
+    <button id="sendBtn">➤</button>
+  </div>
+
+  <!-- NEW: Scroll to bottom button -->
+  <button id="scrollBottom" class="scrollBottom">⬇️</button>
+
+</div>
+
+<div class="floatingBar">
+  <button>👤</button>
+  <button>➕</button>
+  <button>⚙️</button>
+</div>
+
+<div id="aboutModal" class="modal">
+  <div class="modalBox">
+    <span id="closeAbout">✖</span>
+    <h3>About PAM App</h3>
+    <p>Created by Cornelius Pam Cyprian</p>
+    <p>Public chat web app inspired by WhatsApp & Messenger.</p>
+  </div>
+</div>
+
+<!-- Profile Modal -->
+<div id="profileModal" class="modal">
+  <div class="modalContent">
+    <span id="closeProfile" class="closeBtn">&times;</span>
+    <img id="profilePicLarge" src="" alt="Profile Picture" class="largeAvatar">
+    <h2 id="profileName"></h2>
+    <p id="profileStatus"></p>
+  </div>
+</div>
+
+<p id="profileBio" class="profileBio"></p>
+
+<button id="editBioBtn" class="editBioBtn">Edit Bio</button>
+
+<div id="bioEditor" style="display:none;">
+  <textarea id="bioInput" maxlength="120" placeholder="Write something about yourself..."></textarea>
+  <button id="saveBioBtn">Save</button>
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="chat.js"></script>
+</body>
+</html>
