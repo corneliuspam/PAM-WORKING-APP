@@ -461,3 +461,15 @@ body.light .modalBox {
   border-radius: 8px;
   display: block;
 }
+
+/* Active users ticker: remove white background */
+.activeUsersTicker {
+  width: 100%;
+  overflow: hidden;
+  background: transparent;   /* was #f8f8f8 */
+  border-bottom: none;       /* remove border if you want */
+  white-space: nowrap;
+  padding: 0;                /* remove extra vertical padding */
+  box-sizing: border-box;
+  font-size: 0.9em;
+}
