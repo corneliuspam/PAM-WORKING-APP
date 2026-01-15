@@ -419,3 +419,37 @@ body.light .modalBox {
   cursor: pointer;
   display: none;
 }
+
+.activeUsersTicker {
+  width: 100%;
+  overflow: hidden;
+  background: #f8f8f8;
+  border-bottom: 1px solid #ddd;
+  white-space: nowrap;
+  padding: 5px 0;
+  box-sizing: border-box;
+  font-size: 0.9em;
+}
+
+#tickerContent {
+  display: inline-block;
+  animation: ticker 15s linear infinite;
+}
+
+@keyframes ticker {
+  0% { transform: translateX(100%); }
+  100% { transform: translateX(-100%); }
+}
+
+.tickerUser {
+  display: inline-flex;
+  align-items: center;
+  margin-right: 15px;
+}
+
+.tickerUser img {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  margin-right: 5px;
+}
