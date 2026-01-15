@@ -5,6 +5,82 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>PAM Chat Dashboard</title>
 <link rel="stylesheet" href="style.css">
+<style>
+/* ===== NEW CSS ADDITIONS ===== */
+.activeUsersTicker {
+  width: 100%;
+  overflow: hidden;
+  background: #f8f8f8;
+  border-bottom: 1px solid #ddd;
+  white-space: nowrap;
+  padding: 5px 0;
+  box-sizing: border-box;
+  font-size: 0.9em;
+}
+
+#tickerContent {
+  display: inline-block;
+  animation: ticker 15s linear infinite;
+}
+
+@keyframes ticker {
+  0% { transform: translateX(100%); }
+  100% { transform: translateX(-100%); }
+}
+
+.tickerUser {
+  display: inline-flex;
+  align-items: center;
+  margin-right: 15px;
+}
+
+.tickerUser img {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  margin-right: 5px;
+}
+
+.deleteMsgBtn {
+  margin-left: 5px;
+  font-size: 0.7em;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.scrollBottom {
+  position: fixed;
+  bottom: 80px;
+  right: 20px;
+  padding: 8px;
+  border-radius: 50%;
+  background: #007bff;
+  color: white;
+  border: none;
+  cursor: pointer;
+  display: none;
+}
+
+.msgImage {
+  max-width: 150px;
+  max-height: 150px;
+  margin-top: 5px;
+  border-radius: 8px;
+  display: block;
+}
+
+.bubble {
+  position: relative;
+  padding: 8px 12px;
+  margin: 5px 0;
+  border-radius: 15px;
+  background: #e1ffc7;
+}
+
+.other .bubble { background: #fff; }
+.me .bubble { background: #dcf8c6; position: relative; }
+</style>
 </head>
 <body>
 
@@ -17,7 +93,6 @@
         <div id="usernameDisplay"></div>
         <small id="status">● Offline</small>
       </div>
-      <!-- NEW: User Status Toggle -->
       <select id="statusToggle">
         <option value="Online">Online</option>
         <option value="Away">Away</option>
@@ -31,7 +106,12 @@
     </div>
   </header>
 
-  <!-- NEW: Online Users List -->
+  <!-- NEW: Active Users Ticker -->
+  <div id="activeUsersTicker" class="activeUsersTicker">
+    <div id="tickerContent"></div>
+  </div>
+
+  <!-- ONLINE USERS LIST -->
   <div id="onlineUsers" class="onlineUsers">
     <h4>Online Users</h4>
     <ul id="onlineList"></ul>
@@ -40,13 +120,11 @@
   <div id="chat" class="chatContainer"></div>
 
   <div class="inputBox">
-    <!-- NEW: Emoji Button -->
-    <button id="emojiBtn">😊</button>
+    <!-- EMOJI REMOVED -->
     <input id="msg" placeholder="Type a message">
     <button id="sendBtn">➤</button>
   </div>
 
-  <!-- NEW: Scroll to bottom button -->
   <button id="scrollBottom" class="scrollBottom">⬇️</button>
 
 </div>
@@ -54,9 +132,10 @@
 <div class="floatingBar">
   <button>👤</button>
   <button>➕</button>
-  <button>⚙️</button>
+  <button id="settingsBtn">⚙️</button>
 </div>
 
+<!-- ABOUT MODAL -->
 <div id="aboutModal" class="modal">
   <div class="modalBox">
     <span id="closeAbout">✖</span>
@@ -66,7 +145,7 @@
   </div>
 </div>
 
-<!-- Profile Modal -->
+<!-- PROFILE MODAL -->
 <div id="profileModal" class="modal">
   <div class="modalContent">
     <span id="closeProfile" class="closeBtn">&times;</span>
@@ -77,12 +156,23 @@
 </div>
 
 <p id="profileBio" class="profileBio"></p>
-
 <button id="editBioBtn" class="editBioBtn">Edit Bio</button>
-
 <div id="bioEditor" style="display:none;">
   <textarea id="bioInput" maxlength="120" placeholder="Write something about yourself..."></textarea>
   <button id="saveBioBtn">Save</button>
+</div>
+
+<!-- NEW: SETTINGS MODAL -->
+<div id="settingsModal" class="modal">
+  <div class="modalContent">
+    <span id="closeSettings" class="closeBtn">&times;</span>
+    <h3>Settings</h3>
+    <button id="logoutBtn">Logout</button>
+    <div>
+      <input type="text" id="newUsername" placeholder="New Username">
+      <button id="changeUsernameBtn">Change Username</button>
+    </div>
+  </div>
 </div>
 
 <script src="/socket.io/socket.io.js"></script>
