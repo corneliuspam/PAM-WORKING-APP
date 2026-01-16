@@ -321,7 +321,20 @@ document.addEventListener("click", (e) => {
     };
 
     openUserProfile(user);
+      // ✅ Store active user for private chat
+    localStorage.setItem("activePrivateUser", user.username);
   }
+});
+
+// Open modal when clicking avatar
+document.getElementById("userPic").addEventListener("click", () => {
+  profilePicLarge.src = localStorage.getItem("photo");
+  profileName.textContent = localStorage.getItem("user");
+  profileStatus.textContent = localStorage.getItem("userStatus") || "Online";
+  profileModal.style.display = "flex";
+
+  // ✅ Store active private user for message button
+  localStorage.setItem("activePrivateUser", localStorage.getItem("user"));
 });
 
 // ===== FLOATING PRIVATE CHAT DASHBOARD =====
