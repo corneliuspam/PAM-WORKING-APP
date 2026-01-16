@@ -30,3 +30,12 @@ io.on("connection", (socket) => {
 
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+
+// ===== PRIVATE CHAT SOCKETS =====
+socket.on("join private", room => {
+  socket.join(room);
+});
+
+socket.on("private message", data => {
+  socket.to(data.room).emit("private message", data);
+});
