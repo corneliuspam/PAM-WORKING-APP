@@ -272,3 +272,16 @@ document.addEventListener("click", (e) => {
     window.location.href = "/private-chat.html";
   }
 });
+
+// ===== OPEN PROFILE FROM MESSAGE AVATAR =====
+document.addEventListener("click", (e) => {
+  if (e.target.classList.contains("avatar") && e.target.dataset.username) {
+    const user = {
+      username: e.target.dataset.username,
+      photo: e.target.dataset.photo,
+      status: e.target.dataset.status
+    };
+
+    openUserProfile(user);
+  }
+});
