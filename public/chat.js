@@ -1,4 +1,3 @@
-alert("chat.js loaded");
 // ===== SOCKET CONNECTION =====
 const socket = io({ transports: ["websocket"] });
 
