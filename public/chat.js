@@ -256,3 +256,13 @@ document.addEventListener("click", (e) => {
     window.location.href = "/private-chat.html";
   }
 });
+
+// ===== PROFILE → PRIVATE CHAT ENTRY (FINAL SAFE) =====
+document.addEventListener("click", (e) => {
+  if (e.target.id === "startPrivateChat") {
+    const targetUser = localStorage.getItem("activePrivateUser");
+    if (!targetUser) return;
+
+    window.location.href = "/private-chat.html";
+  }
+});
