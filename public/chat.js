@@ -102,10 +102,13 @@ const profileStatus = document.getElementById("profileStatus");
 const closeProfile = document.getElementById("closeProfile");
 
 document.getElementById("userPic").addEventListener("click", () => {
-  profilePicLarge.src = photo;
-  profileName.textContent = username;
-  profileStatus.textContent = "Online";
+  profilePicLarge.src = profileData.photo;
+  profileName.textContent = profileData.username;
+  profileStatus.textContent = profileData.status;
   profileModal.style.display = "flex";
+
+  // mark self profile
+  localStorage.setItem("activePrivateUser", profileData.username);
 });
 closeProfile.addEventListener("click", () => profileModal.style.display = "none");
 window.addEventListener("click", e => { if (e.target === profileModal) profileModal.style.display = "none"; });
