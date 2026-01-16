@@ -504,3 +504,65 @@ saveSettingsBtn.onclick = () => {
     settingsPanel.style.display = "none";
   }
 };
+
+// ===== SAFE PRIVATE CHAT & SETTINGS PATCH =====
+
+// Wrap in IIFE to avoid global errors
+(function () {
+  // ===== GET ELEMENTS =====
+  const startPrivateChatBtn = document.getElementById("startPrivateChat");
+  const privateChatBtn = document.getElementById("privateChatBtn");
+  const saveSettingsBtn = document.getElementById("saveSettingsBtn");
+  
+  // Safety checks
+  if (!startPrivateChatBtn && !privateChatBtn && !saveSettingsBtn) return;
+
+  // ===== FUNCTION TO OPEN PRIVATE CHAT =====
+  function openPrivateChat() {
+    const targetUser = localStorage.getItem("activePrivateUser");
+    if (!targetUser) {
+      alert("Select a user first!");
+      return;
+    }
+    window.location.href = `/private-chat.html?user=${encodeURIComponent(targetUser)}`;
+  }
+
+  // ===== ATTACH CLICK EVENTS SAFELY =====
+  if (startPrivateChatBtn) startPrivateChatBtn.addEventListener("click", openPrivateChat);
+  if (privateChatBtn) privateChatBtn.addEventListener("click", openPrivateChat);
+
+  // ===== SETTINGS SAVE BUTTON =====
+  if (saveSettingsBtn) {
+    saveSettingsBtn.addEventListener("click", () => {
+      // Save status
+      if (typeof statusInput !== "undefined") {
+        const status = statusInput.value.trim();
+        localStorage.setItem("userStatus", status);
+        if (document.getElementById("status"))
+          document.getElementById("status").textContent = `● ${status || 'Online'}`;
+        if (document.getElementById("profileStatus"))
+          document.getElementById("profileStatus").textContent = status || 'Online';
+      }
+
+      // Save profile photo
+      if (typeof photoInput !== "undefined" && photoInput.files[0]) {
+        const reader = new FileReader();
+        reader.onload = () => {
+          localStorage.setItem("photo", reader.result);
+          if (document.getElementById("userPic"))
+            document.getElementById("userPic").src = reader.result;
+          if (document.getElementById("profilePicLarge"))
+            document.getElementById("profilePicLarge").src = reader.result;
+          alert("Settings saved!");
+          if (typeof settingsPanel !== "undefined")
+            settingsPanel.style.display = "none";
+        };
+        reader.readAsDataURL(photoInput.files[0]);
+      } else {
+        alert("Settings saved!");
+        if (typeof settingsPanel !== "undefined")
+          settingsPanel.style.display = "none";
+      }
+    });
+  }
+})();
