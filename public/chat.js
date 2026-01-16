@@ -11,40 +11,26 @@ const aboutModal = document.getElementById("aboutModal");
 const closeAbout = document.getElementById("closeAbout");
 const tickerContent = document.getElementById("tickerContent");
 
-// Open private chat when clicking either floating button or message button
+// ===== PRIVATE CHAT BUTTONS =====
 const privateChatBtn = document.getElementById("privateChatBtn");
 const startPrivateChatBtn = document.getElementById("startPrivateChat");
 
-// Open private chat when clicking either floating button or message button
-const privateChatBtn = document.getElementById("privateChatBtn");
-const startPrivateChatBtn = document.getElementById("startPrivateChat");
+// ===== SETTINGS ELEMENTS =====
+const saveSettingsBtn = document.getElementById("saveSettingsBtn");
+const statusInput = document.getElementById("statusInput");
+const photoInput = document.getElementById("photoInput");
+const settingsPanel = document.getElementById("settingsModal");
+const openSettings = document.getElementById("settingsBtn");
 
-function openPrivateChat() {
-  const targetUser = localStorage.getItem("activePrivateUser");
-  if (!targetUser) {
-    alert("Select a user first!");
-    return;
-  }
-  window.location.href = `/private-chat.html?user=${encodeURIComponent(targetUser)}`;
-}
-
-// Floating icon
-if (privateChatBtn) privateChatBtn.addEventListener("click", openPrivateChat);
-
-// Message button in profile modal
-if (startPrivateChatBtn) startPrivateChatBtn.addEventListener("click", openPrivateChat);
+// ===== PROFILE ELEMENTS =====
+const profileModal = document.getElementById("profileModal");
+const profileName = document.getElementById("profileName");
+const profilePicLarge = document.getElementById("profilePicLarge");
+const profileStatus = document.getElementById("profileStatus");
 
 // ===== USER DATA =====
 let username = localStorage.getItem("user");
 let photo = localStorage.getItem("photo");
-
-// ===== PROFILE DATA (SAFE ADDITION) =====
-const profileData = {
-  username: username,
-  photo: photo,
-  status: localStorage.getItem("profileStatus") || "Hey there! I am using PAM App.",
-  online: true
-};
 
 // ===== SAFETY CHECK =====
 if (!username) window.location.href = "/";
@@ -53,7 +39,7 @@ if (!username) window.location.href = "/";
 window.addEventListener("load", () => {
   document.getElementById("usernameDisplay").textContent = username;
   document.getElementById("userPic").src = photo;
-  document.getElementById("status").textContent = "● Online";
+  document.getElementById("status").textContent = `● ${localStorage.getItem("userStatus") || "Online"}`;
 });
 
 // ===== MESSAGE RENDER FUNCTION =====
@@ -61,21 +47,20 @@ function renderMessage(data, isMe) {
   const wrapper = document.createElement("div");
   wrapper.className = isMe ? "me" : "other";
 
-  let contentHTML = `<span>${data.message}</span>`;
-  if (data.image) contentHTML += `<br><img src="${data.image}" class="msgImage" />`;
-
   wrapper.innerHTML = `
-    <img 
-  class="avatar"
-  src="${isMe ? photo : (data.photo || photo)}"
-  data-username="${data.username}"
-  data-photo="${data.photo || photo}"
-  data-status="${data.status || 'Hey there! I am using PAM App.'}"
-/>
-    <div class="bubble">${contentHTML}<small class="time">${data.time}</small></div>
+    <img class="avatar"
+      src="${isMe ? photo : (data.photo || photo)}"
+      data-username="${data.username}"
+      data-photo="${data.photo || photo}"
+      data-status="${data.status || 'Hey there! I am using PAM App.'}"
+    />
+    <div class="bubble">
+      <span>${data.message || ""}</span>
+      ${data.image ? `<br><img src="${data.image}" class="msgImage">` : ""}
+      <small class="time">${data.time}</small>
+    </div>
   `;
 
-  // DELETE BUTTON FOR SELF
   if (isMe) {
     const delBtn = document.createElement("button");
     delBtn.textContent = "🗑️";
@@ -91,23 +76,35 @@ function renderMessage(data, isMe) {
 // ===== SEND MESSAGE =====
 function sendMessage() {
   const text = msgInput.value.trim();
-  if (!text) return;
+  if (!text && !photoInput.files[0]) return;
 
   const data = {
     username,
-    message: text,
+    message: text || "",
     image: null,
     time: new Date().toLocaleTimeString()
   };
 
-  renderMessage(data, true);
-  socket.emit("chat message", data);
+  // If user selected image
+  if (photoInput.files[0]) {
+    const reader = new FileReader();
+    reader.onload = function(evt) {
+      data.image = evt.target.result;
+      renderMessage(data, true);
+      socket.emit("chat message", data);
+    };
+    reader.readAsDataURL(photoInput.files[0]);
+    photoInput.value = "";
+  } else {
+    renderMessage(data, true);
+    socket.emit("chat message", data);
+  }
+
   msgInput.value = "";
 }
 
-// ===== EVENTS =====
-sendBtn.addEventListener("click", sendMessage);
-msgInput.addEventListener("keydown", e => { if (e.key === "Enter") sendMessage(); });
+sendBtn.onclick = sendMessage;
+msgInput.onkeydown = e => { if (e.key === "Enter") sendMessage(); };
 
 // ===== RECEIVE MESSAGE =====
 socket.on("chat message", data => {
@@ -115,7 +112,7 @@ socket.on("chat message", data => {
   renderMessage(data, false);
 });
 
-// ===== DARK MODE =====
+// ===== THEME =====
 themeToggle.onclick = () => document.body.classList.toggle("light");
 
 // ===== ABOUT MODAL =====
@@ -124,69 +121,88 @@ closeAbout.onclick = () => aboutModal.style.display = "none";
 window.onclick = e => { if (e.target === aboutModal) aboutModal.style.display = "none"; };
 
 // ===== PROFILE MODAL =====
-const profileModal = document.getElementById("profileModal");
-const profileName = document.getElementById("profileName");
-const profilePicLarge = document.getElementById("profilePicLarge");
-const profileStatus = document.getElementById("profileStatus");
-const closeProfile = document.getElementById("closeProfile");
-
-document.getElementById("userPic").addEventListener("click", () => {
-  profilePicLarge.src = profileData.photo;
-  profileName.textContent = profileData.username;
-  profileStatus.textContent = profileData.status;
-  profileModal.style.display = "flex";
-
-  // mark self profile
-  localStorage.setItem("activePrivateUser", profileData.username);
-});
-closeProfile.addEventListener("click", () => profileModal.style.display = "none");
-window.addEventListener("click", e => { if (e.target === profileModal) profileModal.style.display = "none"; });
-
-// ===== OPEN OTHER USER PROFILE (SAFE, FUTURE USE) =====
 function openUserProfile(user) {
-  profilePicLarge.src = user.photo;
+  profilePicLarge.src = user.photo || photo;
   profileName.textContent = user.username;
-  profileStatus.textContent = user.status || "No status";
+  profileStatus.textContent = user.status || "Online";
   profileModal.style.display = "flex";
 
+  // Store active user for private chat
   localStorage.setItem("activePrivateUser", user.username);
 }
 
-// ===== PROFILE BIO =====
-(function () {
-  const bioText = document.getElementById("profileBio");
-  const editBtn = document.getElementById("editBioBtn");
-  const bioEditor = document.getElementById("bioEditor");
-  const bioInput = document.getElementById("bioInput");
-  const saveBio = document.getElementById("saveBioBtn");
+// Click avatar in chat messages to open profile
+document.addEventListener("click", e => {
+  if (e.target.classList.contains("avatar") && e.target.dataset.username) {
+    openUserProfile({
+      username: e.target.dataset.username,
+      photo: e.target.dataset.photo,
+      status: e.target.dataset.status
+    });
+  }
+});
 
-  if (!bioText || !editBtn) return;
-
-  const savedBio = localStorage.getItem("profileBio") || "Hey there! I am using PAM App.";
-  bioText.textContent = savedBio;
-
-  editBtn.onclick = () => { bioEditor.style.display = "block"; bioInput.value = bioText.textContent; };
-  saveBio.onclick = () => {
-    const bio = bioInput.value.trim() || "Hey there! I am using PAM App.";
-    localStorage.setItem("profileBio", bio);
-    bioText.textContent = bio;
-    bioEditor.style.display = "none";
-  };
-})();
-
-// ===== ONLINE USERS LIST =====
-const onlineList = document.getElementById("onlineList");
-function updateOnlineUsers(users) {
-  onlineList.innerHTML = "";
-  users.forEach(u => {
-    const li = document.createElement("li");
-    li.textContent = u;
-    onlineList.appendChild(li);
+// Click top avatar (your profile) to open profile modal
+document.getElementById("userPic").onclick = () => {
+  openUserProfile({
+    username: username,
+    photo: photo,
+    status: localStorage.getItem("userStatus") || "Online"
   });
+};
+
+// Close profile modal
+document.getElementById("closeProfile").onclick = () => profileModal.style.display = "none";
+window.addEventListener("click", e => { if (e.target === profileModal) profileModal.style.display = "none"; });
+
+// ===== PRIVATE CHAT FUNCTION =====
+function openPrivateChat() {
+  const targetUser = localStorage.getItem("activePrivateUser");
+  if (!targetUser) { alert("Select a user first!"); return; }
+  window.location.href = `/private-chat.html?user=${encodeURIComponent(targetUser)}`;
 }
 
-// ===== ACTIVE USERS TICKER =====
+if (privateChatBtn) privateChatBtn.onclick = openPrivateChat;
+if (startPrivateChatBtn) startPrivateChatBtn.onclick = openPrivateChat;
+
+// ===== SETTINGS PANEL =====
+openSettings.onclick = () => {
+  settingsPanel.style.display = "flex";
+  statusInput.value = localStorage.getItem("userStatus") || "";
+};
+
+// Save settings (status & photo)
+if (saveSettingsBtn) {
+  saveSettingsBtn.onclick = () => {
+    const status = statusInput.value.trim();
+    localStorage.setItem("userStatus", status);
+    document.getElementById("status").textContent = `● ${status || "Online"}`;
+    profileStatus.textContent = status || "Online";
+
+    if (photoInput.files[0]) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        localStorage.setItem("photo", reader.result);
+        document.getElementById("userPic").src = reader.result;
+        profilePicLarge.src = reader.result;
+        settingsPanel.style.display = "none";
+      };
+      reader.readAsDataURL(photoInput.files[0]);
+    } else {
+      settingsPanel.style.display = "none";
+    }
+  };
+}
+
+// Logout button
+document.getElementById("logoutBtn").onclick = () => {
+  localStorage.clear();
+  window.location.href = "/";
+};
+
+// ===== ONLINE USERS ROTATING TICKER =====
 function updateTicker(users) {
+  if (!tickerContent) return; // Safety
   tickerContent.innerHTML = "";
   users.forEach(u => {
     const div = document.createElement("div");
@@ -196,127 +212,16 @@ function updateTicker(users) {
   });
 }
 
-// ===== SAMPLE ACTIVE USERS =====
+// Example call (can replace with real server data)
 updateTicker([
   { username: username, photo: photo },
   { username: "Alice", photo: "/default.png" },
   { username: "Bob", photo: "/default.png" }
 ]);
 
-// ===== USER STATUS TOGGLE =====
-const statusToggle = document.getElementById("statusToggle");
-const statusDisplay = document.getElementById("status");
-statusToggle.addEventListener("change", () => { statusDisplay.textContent = `● ${statusToggle.value}`; });
-
-// ===== SCROLL TO BOTTOM BUTTON =====
+// ===== SCROLL TO BOTTOM =====
 const scrollBtn = document.getElementById("scrollBottom");
 chatContainer.addEventListener("scroll", () => {
   scrollBtn.style.display = chatContainer.scrollTop < chatContainer.scrollHeight - chatContainer.clientHeight ? "block" : "none";
 });
-scrollBtn.addEventListener("click", () => chatContainer.scrollTop = chatContainer.scrollHeight);
-
-// ===== SETTINGS MODAL =====
-const settingsModal = document.getElementById("settingsModal");
-document.getElementById("settingsBtn").addEventListener("click", () => { settingsModal.style.display = "flex"; });
-document.getElementById("closeSettings").addEventListener("click", () => { settingsModal.style.display = "none"; });
-
-// LOGOUT
-document.getElementById("logoutBtn").addEventListener("click", () => {
-  localStorage.clear();
-  window.location.href = "/";
-});
-
-// CHANGE USERNAME
-document.getElementById("changeUsernameBtn").addEventListener("click", () => {
-  const newName = document.getElementById("newUsername").value.trim();
-  if (!newName) return;
-  localStorage.setItem("user", newName);
-  username = newName;
-  document.getElementById("usernameDisplay").textContent = newName;
-  alert("Username updated!");
-  settingsModal.style.display = "none";
-});
-
-// ===== IMAGE UPLOADER =====
-const imageBtn = document.getElementById("imageBtn");
-const imageInput = document.getElementById("imageInput");
-
-// Open file selector
-imageBtn.addEventListener("click", () => {
-  imageInput.click();
-});
-
-// When user selects image
-imageInput.addEventListener("change", (e) => {
-  const file = e.target.files[0];
-  if (!file) return;
-
-  const reader = new FileReader();
-  reader.onload = function(evt) {
-    const base64 = evt.target.result;
-
-    const data = {
-      username,
-      message: "", // optional text with image
-      image: base64,
-      time: new Date().toLocaleTimeString()
-    };
-
-    // Render locally
-    renderMessage(data, true);
-
-    // Send via socket
-    socket.emit("chat message", data);
-  };
-
-  reader.readAsDataURL(file);
-
-  // Clear input for next image
-  imageInput.value = "";
-});
-
-// ===== PROFILE → PRIVATE CHAT ENTRY (SAFE BIND) =====
-document.addEventListener("click", (e) => {
-  if (e.target && e.target.id === "startPrivateChat") {
-    const targetUser = localStorage.getItem("activePrivateUser");
-
-    if (!targetUser || targetUser === profileData.username) return;
-
-    window.location.href = "/private-chat.html";
-  }
-});
-
-// ===== OPEN PROFILE FROM MESSAGE AVATAR =====
-document.addEventListener("click", (e) => {
-  if (e.target.classList.contains("avatar") && e.target.dataset.username) {
-    const user = {
-      username: e.target.dataset.username,
-      photo: e.target.dataset.photo,
-      status: e.target.dataset.status
-    };
-
-    openUserProfile(user);
-      // ✅ Store active user for private chat
-    localStorage.setItem("activePrivateUser", user.username);
-  }
-});
-
-// Open modal when clicking avatar
-document.getElementById("userPic").addEventListener("click", () => {
-  profilePicLarge.src = localStorage.getItem("photo");
-  profileName.textContent = localStorage.getItem("user");
-  profileStatus.textContent = localStorage.getItem("userStatus") || "Online";
-  profileModal.style.display = "flex";
-
-  // ✅ Store active private user for message button
-  localStorage.setItem("activePrivateUser", localStorage.getItem("user"));
-});
-
-// ===== FLOATING PRIVATE CHAT DASHBOARD =====
-const privateChatBtn = document.getElementById("privateChatBtn");
-
-if (privateChatBtn) {
-  privateChatBtn.onclick = () => {
-    window.location.href = "/private-chat.html";
-  };
-}
+scrollBtn.onclick = () => { chatContainer.scrollTop = chatContainer.scrollHeight; };
