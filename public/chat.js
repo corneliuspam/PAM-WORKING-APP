@@ -11,6 +11,19 @@ const aboutModal = document.getElementById("aboutModal");
 const closeAbout = document.getElementById("closeAbout");
 const tickerContent = document.getElementById("tickerContent");
 
+// ===== ACTIVE USERS ROTATION =====
+function updateTicker(users) {
+  if (!tickerContent) return;
+
+  tickerContent.innerHTML = "";
+  users.forEach(u => {
+    const div = document.createElement("div");
+    div.className = "tickerUser";
+    div.innerHTML = `<img src="${u.photo}"><span>${u.username}</span>`;
+    tickerContent.appendChild(div);
+  });
+}
+
 // ===== PRIVATE CHAT BUTTONS (DECLARE ONCE) =====
 const privateChatBtn = document.getElementById("privateChatBtn");
 const startPrivateChatBtn = document.getElementById("startPrivateChat");
