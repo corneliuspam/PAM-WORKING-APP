@@ -430,33 +430,6 @@ openSettings.onclick = () => {
   document.getElementById("usernameInput").value = localStorage.getItem("user") || "";
 };
 
-const saveSettingsBtn = document.getElementById("saveSettingsBtn");
-
-saveSettingsBtn.onclick = () => {
-  // Save status
-  const status = statusInput.value.trim();
-  localStorage.setItem("userStatus", status);
-  document.getElementById("status").textContent = `● ${status || 'Online'}`;
-  document.getElementById("profileStatus").textContent = status || 'Online';
-
-  // Save profile picture
-  const photoFile = photoInput.files[0];
-  if (photoFile) {
-    const reader = new FileReader();
-    reader.onload = () => {
-      localStorage.setItem("photo", reader.result);
-      document.getElementById("userPic").src = reader.result;
-      document.getElementById("profilePicLarge").src = reader.result;
-      alert("Settings saved!");
-      settingsPanel.style.display = "none";
-    };
-    reader.readAsDataURL(photoFile);
-  } else {
-    alert("Settings saved!");
-    settingsPanel.style.display = "none";
-  }
-};
-
 // ===== SAFE PRIVATE CHAT & SETTINGS PATCH =====
 
 // Wrap in IIFE to avoid global errors
