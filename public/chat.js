@@ -365,3 +365,14 @@ saveSettingsBtn.onclick = () => {
   alert("Settings saved!");
   settingsPanel.style.display = "none";
 };
+
+document.addEventListener("click", (e) => {
+  if (e.target.id === "startPrivateChat" || e.target.id === "privateChatBtn") {
+    const targetUser = localStorage.getItem("activePrivateUser");
+    if (!targetUser) {
+      alert("No user selected to chat with!");
+      return;
+    }
+    window.location.href = "/private-chat.html";
+  }
+});
