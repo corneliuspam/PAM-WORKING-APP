@@ -15,6 +15,14 @@ const tickerContent = document.getElementById("tickerContent");
 let username = localStorage.getItem("user");
 let photo = localStorage.getItem("photo");
 
+// ===== PROFILE DATA (SAFE ADDITION) =====
+const profileData = {
+  username: username,
+  photo: photo,
+  status: localStorage.getItem("profileStatus") || "Hey there! I am using PAM App.",
+  online: true
+};
+
 // ===== SAFETY CHECK =====
 if (!username) window.location.href = "/";
 
