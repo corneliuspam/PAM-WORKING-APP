@@ -1,15 +1,17 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Private Chat</title>
-<link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Private Chat</title>
+
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
 <div class="app">
 
+  <!-- HEADER -->
   <header>
     <div class="left">
       <img id="privateUserPic" class="profileIcon">
@@ -24,8 +26,10 @@
     </div>
   </header>
 
+  <!-- CHAT -->
   <div id="privateChat" class="chatContainer"></div>
 
+  <!-- INPUT -->
   <div class="inputBox">
     <input id="privateMsg" placeholder="Type a private message">
     <button id="privateSendBtn">➤</button>
@@ -33,7 +37,15 @@
 
 </div>
 
-<script src="/socket.io/socket.io.js"></script>
+<!-- 🔥 FIREBASE SDKs -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
+<!-- 🔥 FIREBASE INIT (SAME ONE USED EVERYWHERE) -->
+<script src="firebase-init.js"></script>
+
+<!-- 🔥 PRIVATE CHAT LOGIC -->
 <script src="private-chat.js"></script>
+
 </body>
 </html>
