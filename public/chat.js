@@ -119,6 +119,15 @@ function openUserProfile(user) {
   localStorage.setItem("activePrivateUser", user.username);
 }
 
+// ===== OPEN OWN PROFILE FROM TOP AVATAR =====
+document.getElementById("userPic").addEventListener("click", () => {
+  openUserProfile({
+    username: localStorage.getItem("user"),
+    photo: localStorage.getItem("photo"),
+    status: localStorage.getItem("userStatus") || "Online"
+  });
+});
+
 // ===== CLICK AVATAR IN CHAT =====
 document.addEventListener("click", e => {
   if (e.target.classList.contains("avatar")) {
