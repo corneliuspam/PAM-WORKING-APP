@@ -214,6 +214,38 @@ document.getElementById("changeUsernameBtn").addEventListener("click", () => {
   settingsModal.style.display = "none";
 });
 
+// ===== PROFILE STATUS & PHOTO IN SETTINGS =====
+const statusInput = document.getElementById("statusInput");
+const photoInput = document.getElementById("photoInput");
+
+// Open settings: fill current values
+openSettings.onclick = () => {
+  settingsPanel.style.display = "flex";
+  statusInput.value = localStorage.getItem("userStatus") || "";
+  document.getElementById("usernameInput").value = localStorage.getItem("user") || "";
+};
+
+// Save status instantly
+statusInput.addEventListener("input", () => {
+  localStorage.setItem("userStatus", statusInput.value);
+  document.getElementById("status").textContent = `● ${statusInput.value || 'Online'}`;
+  document.getElementById("profileStatus").textContent = statusInput.value || 'Online';
+});
+
+// Change profile picture
+photoInput.onchange = () => {
+  const file = photoInput.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = () => {
+    localStorage.setItem("photo", reader.result);
+    document.getElementById("userPic").src = reader.result;
+    document.getElementById("profilePicLarge").src = reader.result;
+  };
+  reader.readAsDataURL(file);
+};
+
 // ===== IMAGE UPLOADER =====
 const imageBtn = document.getElementById("imageBtn");
 const imageInput = document.getElementById("imageInput");
