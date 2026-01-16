@@ -332,3 +332,23 @@ if (privateChatBtn) {
     window.location.href = "/private-chat.html";
   };
 }
+
+const saveSettingsBtn = document.getElementById("saveSettingsBtn");
+
+saveSettingsBtn.onclick = () => {
+  // Save profile status
+  const status = statusInput.value.trim();
+  localStorage.setItem("userStatus", status);
+  document.getElementById("status").textContent = `● ${status || 'Online'}`;
+  document.getElementById("profileStatus").textContent = status || 'Online';
+
+  // Save profile photo
+  const photo = localStorage.getItem("photo");
+  if (photo) {
+    document.getElementById("userPic").src = photo;
+    document.getElementById("profilePicLarge").src = photo;
+  }
+
+  alert("Settings saved!");
+  settingsPanel.style.display = "none";
+};
