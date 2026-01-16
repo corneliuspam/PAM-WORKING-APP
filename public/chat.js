@@ -349,21 +349,28 @@ if (privateChatBtn) {
 const saveSettingsBtn = document.getElementById("saveSettingsBtn");
 
 saveSettingsBtn.onclick = () => {
-  // Save profile status
+  // Save status
   const status = statusInput.value.trim();
   localStorage.setItem("userStatus", status);
   document.getElementById("status").textContent = `● ${status || 'Online'}`;
   document.getElementById("profileStatus").textContent = status || 'Online';
 
-  // Save profile photo
-  const photo = localStorage.getItem("photo");
-  if (photo) {
-    document.getElementById("userPic").src = photo;
-    document.getElementById("profilePicLarge").src = photo;
+  // Save profile photo (if user has uploaded a new one)
+  const photoFile = photoInput.files[0];
+  if (photoFile) {
+    const reader = new FileReader();
+    reader.onload = () => {
+      localStorage.setItem("photo", reader.result);
+      document.getElementById("userPic").src = reader.result;
+      document.getElementById("profilePicLarge").src = reader.result;
+      alert("Settings saved!");
+      settingsPanel.style.display = "none";
+    };
+    reader.readAsDataURL(photoFile);
+  } else {
+    alert("Settings saved!");
+    settingsPanel.style.display = "none";
   }
-
-  alert("Settings saved!");
-  settingsPanel.style.display = "none";
 };
 
 document.addEventListener("click", (e) => {
