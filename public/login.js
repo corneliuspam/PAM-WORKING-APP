@@ -1,120 +1,86 @@
-// ===== LOGIN PANEL ELEMENTS =====
-const loginEmail = document.getElementById("loginEmail");
-const loginPassword = document.getElementById("loginPassword");
-const loginBtn = document.getElementById("loginBtn");
-const loginError = document.getElementById("loginError"); // optional div to show errors
+// ===== DOM ELEMENTS =====
+const usernameInput = document.getElementById("username");
+const photoInput = document.getElementById("photo");
+const previewImg = document.getElementById("preview");
 
-// ===== SIGNUP PANEL ELEMENTS =====
-const signupUsername = document.getElementById("signupUsername");
-const signupEmail = document.getElementById("signupEmail");
-const signupPassword = document.getElementById("signupPassword");
-const signupBtn = document.getElementById("signupBtn");
-const signupPhotoInput = document.getElementById("signupPhoto"); // new: profile picture input
-const signupError = document.getElementById("signupError"); // optional div to show errors
+// Optional: error display (you can add a div with id="loginError" in HTML)
+const loginError = document.getElementById("loginError");
 
-// ===== LOGIN FUNCTION =====
-loginBtn.onclick = async (e) => {
-  e.preventDefault();
-  loginError.textContent = "";
+// ===== PROFILE PREVIEW =====
+photoInput.onchange = () => {
+  const file = photoInput.files[0];
+  if (!file) return;
 
-  try {
-    const userCredential = await firebase.auth().signInWithEmailAndPassword(
-      loginEmail.value.trim(),
-      loginPassword.value.trim()
-    );
-
-    const user = userCredential.user;
-
-    // Fetch user profile from Firestore
-    const doc = await db.collection("users").doc(user.uid).get();
-    const userData = doc.exists ? doc.data() : { username: user.email, photo: "/default.png" };
-
-    // Save in localStorage for dashboard
-    localStorage.setItem("user", userData.username);
-    localStorage.setItem("photo", userData.photo);
-    localStorage.setItem("uid", user.uid);
-
-    window.location.href = "/dashboard.html";
-  } catch (err) {
-    loginError.textContent = err.message;
-  }
+  const reader = new FileReader();
+  reader.onload = function(evt) {
+    previewImg.src = evt.target.result;
+  };
+  reader.readAsDataURL(file);
 };
 
-// ===== SIGNUP FUNCTION =====
-signupBtn.onclick = async (e) => {
-  e.preventDefault();
-  signupError.textContent = "";
-
-  if (!signupUsername.value.trim()) {
-    signupError.textContent = "Enter a username!";
+// ===== LOGIN / SIGNUP FUNCTION =====
+async function login() {
+  const emailOrUsername = usernameInput.value.trim();
+  if (!emailOrUsername) {
+    alert("Please enter email or username");
     return;
   }
 
+  // Check if a file is uploaded
+  const file = photoInput.files[0];
+
   try {
-    // Create Firebase user
-    const userCredential = await firebase.auth().createUserWithEmailAndPassword(
-      signupEmail.value.trim(),
-      signupPassword.value.trim()
-    );
+    // ===== SIGNUP OR LOGIN LOGIC =====
+    let userCredential;
+
+    // Try to sign in first
+    try {
+      userCredential = await auth.signInWithEmailAndPassword(emailOrUsername, "defaultPassword123!");
+    } catch (err) {
+      // If user doesn't exist, create account
+      if (err.code === "auth/user-not-found") {
+        // Create account with email/password
+        userCredential = await auth.createUserWithEmailAndPassword(emailOrUsername, "defaultPassword123!");
+      } else {
+        throw err; // Other errors
+      }
+    }
 
     const user = userCredential.user;
 
-    // Process profile picture (optional)
-    let photoURL = "/default.png";
-    if (signupPhotoInput.files[0]) {
-      const reader = new FileReader();
-      reader.onload = async (evt) => {
-        photoURL = evt.target.result;
+    let photoURL = "/default.png"; // default image if none uploaded
 
-        // Save user profile in Firestore
-        await db.collection("users").doc(user.uid).set({
-          username: signupUsername.value.trim(),
-          email: signupEmail.value.trim(),
-          photo: photoURL,
-          status: "Online"
-        });
-
-        // Save locally
-        localStorage.setItem("user", signupUsername.value.trim());
-        localStorage.setItem("photo", photoURL);
-        localStorage.setItem("uid", user.uid);
-
-        window.location.href = "/dashboard.html";
-      };
-      reader.readAsDataURL(signupPhotoInput.files[0]);
-    } else {
-      // Save user profile in Firestore without photo
-      await db.collection("users").doc(user.uid).set({
-        username: signupUsername.value.trim(),
-        email: signupEmail.value.trim(),
-        photo: photoURL,
-        status: "Online"
-      });
-
-      localStorage.setItem("user", signupUsername.value.trim());
-      localStorage.setItem("photo", photoURL);
-      localStorage.setItem("uid", user.uid);
-
-      window.location.href = "/dashboard.html";
+    // ===== UPLOAD PROFILE PHOTO =====
+    if (file) {
+      const storageRef = storage.ref(`profilePhotos/${user.uid}`);
+      await storageRef.put(file);
+      photoURL = await storageRef.getDownloadURL();
     }
+
+    // ===== SAVE USER INFO TO FIRESTORE =====
+    await db.collection("users").doc(user.uid).set({
+      username: emailOrUsername,
+      email: emailOrUsername,
+      photo: photoURL,
+      status: "Hey there! I am using PAM App.",
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+
+    // ===== SAVE TO LOCALSTORAGE =====
+    localStorage.setItem("user", emailOrUsername);
+    localStorage.setItem("photo", photoURL);
+    localStorage.setItem("userStatus", "Hey there! I am using PAM App.");
+
+    // Redirect to dashboard
+    window.location.href = "/dashboard.html";
+
   } catch (err) {
-    signupError.textContent = err.message;
+    console.error(err);
+    if (loginError) {
+      loginError.textContent = err.message;
+      loginError.style.display = "block";
+    } else {
+      alert(err.message);
+    }
   }
-};
-
-// ===== OPTIONAL: FORM SWITCHING =====
-const loginFormLink = document.getElementById("showLoginForm");
-const signupFormLink = document.getElementById("showSignupForm");
-const loginForm = document.getElementById("login-form");
-const signupForm = document.getElementById("signup-form");
-
-if (loginFormLink && signupFormLink && loginForm && signupForm) {
-  loginFormLink.onclick = () => {
-    signupForm.style.display = "none";
-    loginForm.style.display = "block";
-  };
-  signupFormLink.onclick = () => {
-    loginForm.style.display = "none";
-    signupForm.style.display = "block";
-  };
 }
