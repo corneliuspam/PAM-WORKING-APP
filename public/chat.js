@@ -113,6 +113,16 @@ document.getElementById("userPic").addEventListener("click", () => {
 closeProfile.addEventListener("click", () => profileModal.style.display = "none");
 window.addEventListener("click", e => { if (e.target === profileModal) profileModal.style.display = "none"; });
 
+// ===== OPEN OTHER USER PROFILE (SAFE, FUTURE USE) =====
+function openUserProfile(user) {
+  profilePicLarge.src = user.photo;
+  profileName.textContent = user.username;
+  profileStatus.textContent = user.status || "No status";
+  profileModal.style.display = "flex";
+
+  localStorage.setItem("activePrivateUser", user.username);
+}
+
 // ===== PROFILE BIO =====
 (function () {
   const bioText = document.getElementById("profileBio");
