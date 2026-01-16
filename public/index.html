@@ -6,20 +6,57 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body class="loginBody">
+
   <div class="loginBox">
     <h2>PAM Chat</h2>
+
+    <!-- Preview of profile picture -->
     <img id="preview" class="loginAvatar">
-    <input type="file" id="photo">
-    <input type="text" id="username" placeholder="Username or Phone">
-    <button onclick="login()">Continue</button>
- </div>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
-<script src="/firebase-init.js"></script>
-<script src="/auth.js"></script>
+    <!-- Profile photo input -->
+    <input type="file" id="photo" accept="image/*">
 
-<!-- 4️⃣ Your existing JS (UNCHANGED) -->
-<script src="/chat.js"></script>
+    <!-- Username / Email for login/signup -->
+    <input type="text" id="username" placeholder="Username or Email">
+
+    <!-- Password input for Firebase authentication -->
+    <input type="password" id="password" placeholder="Password">
+
+    <!-- Buttons -->
+    <button id="loginBtn">Login</button>
+    <button id="signupBtn">Sign Up</button>
+
+    <!-- Error display -->
+    <div id="loginError" class="errorMsg"></div>
+    <div id="signupError" class="errorMsg"></div>
+  </div>
+
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
+  <!-- Your Firebase initialization -->
+  <script src="/firebase-init.js"></script>
+
+  <!-- Upgraded auth script -->
+  <script src="/login.js"></script>
+
+  <script>
+    // ===== PREVIEW IMAGE BEFORE UPLOAD =====
+    const photoInput = document.getElementById("photo");
+    const previewImg = document.getElementById("preview");
+
+    photoInput.addEventListener("change", (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (evt) => {
+        previewImg.src = evt.target.result;
+      };
+      reader.readAsDataURL(file);
+    });
+  </script>
+
+</body>
 </html>
