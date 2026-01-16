@@ -11,6 +11,29 @@ const aboutModal = document.getElementById("aboutModal");
 const closeAbout = document.getElementById("closeAbout");
 const tickerContent = document.getElementById("tickerContent");
 
+// Open private chat when clicking either floating button or message button
+const privateChatBtn = document.getElementById("privateChatBtn");
+const startPrivateChatBtn = document.getElementById("startPrivateChat");
+
+// Open private chat when clicking either floating button or message button
+const privateChatBtn = document.getElementById("privateChatBtn");
+const startPrivateChatBtn = document.getElementById("startPrivateChat");
+
+function openPrivateChat() {
+  const targetUser = localStorage.getItem("activePrivateUser");
+  if (!targetUser) {
+    alert("Select a user first!");
+    return;
+  }
+  window.location.href = `/private-chat.html?user=${encodeURIComponent(targetUser)}`;
+}
+
+// Floating icon
+if (privateChatBtn) privateChatBtn.addEventListener("click", openPrivateChat);
+
+// Message button in profile modal
+if (startPrivateChatBtn) startPrivateChatBtn.addEventListener("click", openPrivateChat);
+
 // ===== USER DATA =====
 let username = localStorage.getItem("user");
 let photo = localStorage.getItem("photo");
