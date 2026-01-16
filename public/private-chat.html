@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Private Chat</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="app">
+
+  <header>
+    <div class="left">
+      <img id="privateUserPic" class="profileIcon">
+      <div>
+        <div id="privateUsername"></div>
+        <small id="privateStatus">● Online</small>
+      </div>
+    </div>
+
+    <div class="right">
+      <button id="backBtn">←</button>
+    </div>
+  </header>
+
+  <div id="privateChat" class="chatContainer"></div>
+
+  <div class="inputBox">
+    <input id="privateMsg" placeholder="Type a private message">
+    <button id="privateSendBtn">➤</button>
+  </div>
+
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="private-chat.js"></script>
+</body>
+</html>
