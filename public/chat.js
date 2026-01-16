@@ -253,6 +253,6 @@ document.addEventListener("click", (e) => {
 
     if (!targetUser || targetUser === profileData.username) return;
 
-    window.location.href = "private-chat.html";
+    window.location.href = "/private-chat.html";
   }
 });
