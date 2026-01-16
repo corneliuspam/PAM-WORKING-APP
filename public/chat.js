@@ -42,7 +42,13 @@ function renderMessage(data, isMe) {
   if (data.image) contentHTML += `<br><img src="${data.image}" class="msgImage" />`;
 
   wrapper.innerHTML = `
-    <img class="avatar" src="${photo}" />
+    <img 
+  class="avatar"
+  src="${isMe ? photo : (data.photo || photo)}"
+  data-username="${data.username}"
+  data-photo="${data.photo || photo}"
+  data-status="${data.status || 'Hey there! I am using PAM App.'}"
+/>
     <div class="bubble">${contentHTML}<small class="time">${data.time}</small></div>
   `;
 
