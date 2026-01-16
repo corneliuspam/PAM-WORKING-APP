@@ -285,3 +285,12 @@ document.addEventListener("click", (e) => {
     openUserProfile(user);
   }
 });
+
+// ===== FLOATING PRIVATE CHAT DASHBOARD =====
+const privateChatBtn = document.getElementById("privateChatBtn");
+
+if (privateChatBtn) {
+  privateChatBtn.onclick = () => {
+    window.location.href = "/private-chat.html";
+  };
+}
