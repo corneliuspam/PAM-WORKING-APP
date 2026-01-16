@@ -177,8 +177,19 @@
       <input type="text" id="newUsername" placeholder="New Username">
       <button id="changeUsernameBtn">Change Username</button>
     </div>
-  </div>
+  <!-- Profile Picture -->
+<div class="settingItem">
+  <label>Profile Photo</label>
+  <input type="file" id="photoInput" accept="image/*">
 </div>
+
+<!-- Status -->
+<div class="settingItem">
+  <label>Status</label>
+  <input id="statusInput" maxlength="40" placeholder="What's on your mind?">
+</div>
+</div>
+
 
 <script src="/socket.io/socket.io.js"></script>
 <script src="chat.js"></script>
