@@ -246,15 +246,13 @@ imageInput.addEventListener("change", (e) => {
   imageInput.value = "";
 });
 
-// ===== PROFILE → PRIVATE CHAT ENTRY =====
-const startPrivateBtn = document.getElementById("startPrivateChat");
-
-if (startPrivateBtn) {
-  startPrivateBtn.onclick = () => {
+// ===== PROFILE → PRIVATE CHAT ENTRY (SAFE BIND) =====
+document.addEventListener("click", (e) => {
+  if (e.target && e.target.id === "startPrivateChat") {
     const targetUser = localStorage.getItem("activePrivateUser");
 
     if (!targetUser || targetUser === profileData.username) return;
 
-    window.location.href = "/private-chat.html";
-  };
-}
+    window.location.href = "private-chat.html";
+  }
+});
