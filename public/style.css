@@ -519,3 +519,52 @@ body.light .modalBox {
   padding: 0;
   font-size: 0;
 }
+
+#chat {
+  overflow-y: auto;
+  height: calc(100vh - 160px);
+}
+
+.bubble {
+  padding: 10px;
+  border-radius: 16px;
+  max-width: 75%;
+  word-wrap: break-word;
+}
+
+.me .bubble {
+  background: #dcf8c6;
+  margin-left: auto;
+}
+
+.other .bubble {
+  background: #fff;
+}
+
+.avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.msgImage {
+  max-width: 200px;
+  border-radius: 12px;
+  margin-top: 5px;
+}
+
+#ticker {
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+#tickerContent {
+  display: flex;
+  animation: ticker 15s linear infinite;
+}
+
+@keyframes ticker {
+  from { transform: translateX(100%); }
+  to { transform: translateX(-100%); }
+}
