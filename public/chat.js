@@ -1,3 +1,7 @@
+/* ============================
+   🔐 REAL MODE FLAG (SAFE)
+   ============================ */
+const USE_FIREBASE = true;
 // ===== SOCKET CONNECTION =====
 const socket = io({ transports: ["websocket"] });
 
@@ -31,6 +35,32 @@ const profileStatus = document.getElementById("profileStatus");
 // ===== USER DATA =====
 let username = localStorage.getItem("user");
 let photo = localStorage.getItem("photo");
+
+/* ============================
+   🔥 FIREBASE HELPERS (ADD ONLY)
+   ============================ */
+
+// Assumes firebase is already initialized in HTML
+const auth = firebase.auth();
+const db = firebase.firestore();
+const storage = firebase.storage();
+
+let uid = null;
+
+// Track authenticated user safely
+auth.onAuthStateChanged(user => {
+  if (user) {
+    uid = user.uid;
+
+    // Save / update real user profile
+    db.collection("users").doc(uid).set({
+      username,
+      photo: photo || "",
+      status: localStorage.getItem("userStatus") || "Online",
+      lastSeen: firebase.firestore.FieldValue.serverTimestamp()
+    }, { merge: true });
+  }
+});
 
 // ===== SAFETY CHECK =====
 if (!username) window.location.href = "/";
@@ -73,10 +103,55 @@ function renderMessage(data, isMe) {
   chatContainer.scrollTop = chatContainer.scrollHeight;
 }
 
+/* ============================
+   💬 REAL PUBLIC CHAT (ADD)
+   ============================ */
+if (USE_FIREBASE) {
+  db.collection("publicMessages")
+    .orderBy("time")
+    .onSnapshot(snapshot => {
+      chatContainer.innerHTML = "";
+      snapshot.forEach(doc => {
+        const data = normalizeMessage(doc.data());
+        renderMessage(data, data.username === username);
+      });
+    });
+}
+
+/* ============================
+   👤 FIX MESSAGE IDENTITY
+   (ADD BELOW renderMessage)
+   ============================ */
+function normalizeMessage(data) {
+  return {
+    username: data.username,
+    photo: data.photo || "",
+    status: data.status || "Online",
+    message: data.message || "",
+    image: data.image || null,
+    time: data.time
+  };
+}
+
 // ===== SEND MESSAGE =====
 function sendMessage() {
   const text = msgInput.value.trim();
   if (!text && !photoInput.files[0]) return;
+
+/* ============================
+   🚀 SEND TO FIRESTORE (ADD)
+   ============================ */
+if (USE_FIREBASE && uid) {
+  db.collection("publicMessages").add({
+    uid,
+    username,
+    photo,
+    status: localStorage.getItem("userStatus") || "Online",
+    message: data.message,
+    image: data.image || null,
+    time: firebase.firestore.FieldValue.serverTimestamp()
+  });
+}
 
   const data = {
     username,
@@ -165,6 +240,25 @@ function openPrivateChat() {
 if (privateChatBtn) privateChatBtn.onclick = openPrivateChat;
 if (startPrivateChatBtn) startPrivateChatBtn.onclick = openPrivateChat;
 
+/* ============================
+   🔒 REAL PRIVATE CHAT
+   ============================ */
+function getPrivateChatId(a, b) {
+  return [a, b].sort().join("_");
+}
+
+function listenPrivateChat(otherUID) {
+  const chatId = getPrivateChatId(uid, otherUID);
+
+  db.collection("privateChats")
+    .doc(chatId)
+    .collection("messages")
+    .orderBy("time")
+    .onSnapshot(snapshot => {
+      // render private chat dashboard here
+    });
+}
+
 // ===== SETTINGS PANEL =====
 openSettings.onclick = () => {
   settingsPanel.style.display = "flex";
@@ -219,6 +313,18 @@ updateTicker([
   { username: "Bob", photo: "/default.png" }
 ]);
 
+/* ============================
+   🟢 REAL ONLINE USERS
+   ============================ */
+if (USE_FIREBASE) {
+  db.collection("users")
+    .onSnapshot(snapshot => {
+      const users = [];
+      snapshot.forEach(doc => users.push(doc.data()));
+      updateTicker(users);
+    });
+}
+
 // ===== SCROLL TO BOTTOM =====
 const scrollBtn = document.getElementById("scrollBottom");
 chatContainer.addEventListener("scroll", () => {
@@ -256,6 +362,25 @@ if (imageBtn && imageInput) {
     reader.readAsDataURL(file);
     imageInput.value = "";
   };
+}
+
+/* ============================
+   🖼️ REAL IMAGE STORAGE
+   ============================ */
+if (USE_FIREBASE && uid) {
+  const file = e.target.files[0];
+  const ref = storage.ref(`messages/${uid}/${Date.now()}`);
+  await ref.put(file);
+  const imageURL = await ref.getDownloadURL();
+
+  await db.collection("publicMessages").add({
+    uid,
+    username,
+    photo,
+    image: imageURL,
+    message: "",
+    time: firebase.firestore.FieldValue.serverTimestamp()
+  });
 }
 
 // ===== PATCH SEND MESSAGE =====
