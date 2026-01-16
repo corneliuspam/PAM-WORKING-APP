@@ -158,6 +158,16 @@ const statusInput = document.getElementById("statusInput");
 const photoInput = document.getElementById("photoInput");
 const settingsPanel = document.getElementById("settingsModal");
 
+// ===== OPEN SETTINGS PANEL =====
+const settingsBtn = document.getElementById("settingsBtn");
+const settingsPanel = document.getElementById("settingsModal");
+
+if (settingsBtn && settingsPanel) {
+  settingsBtn.onclick = () => {
+    settingsPanel.style.display = "flex";
+  };
+}
+
 if (saveSettingsBtn) {
   saveSettingsBtn.onclick = () => {
     const status = statusInput.value.trim();
