@@ -225,3 +225,74 @@ chatContainer.addEventListener("scroll", () => {
   scrollBtn.style.display = chatContainer.scrollTop < chatContainer.scrollHeight - chatContainer.clientHeight ? "block" : "none";
 });
 scrollBtn.onclick = () => { chatContainer.scrollTop = chatContainer.scrollHeight; };
+
+// ===== IMAGE MESSAGE UPLOADER =====
+const imageBtn = document.getElementById("imageBtn");
+const imageInput = document.getElementById("imageInput");
+
+if (imageBtn && imageInput) {
+  imageBtn.onclick = () => imageInput.click();
+
+  imageInput.onchange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function(evt) {
+      const data = {
+        username,
+        message: "", // optional text with image
+        image: evt.target.result,
+        time: new Date().toLocaleTimeString()
+      };
+
+      // Render locally
+      renderMessage(data, true);
+
+      // Send via socket
+      socket.emit("chat message", data);
+    };
+
+    reader.readAsDataURL(file);
+    imageInput.value = "";
+  };
+}
+
+// ===== PATCH SEND MESSAGE =====
+function sendMessage() {
+  const text = msgInput.value.trim();
+  const file = imageInput.files[0];
+
+  if (!text && !file) return;
+
+  const data = {
+    username,
+    message: text || "",
+    image: null,
+    time: new Date().toLocaleTimeString()
+  };
+
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = function(evt) {
+      data.image = evt.target.result;
+
+      renderMessage(data, true);
+      socket.emit("chat message", data);
+      imageInput.value = "";
+    };
+    reader.readAsDataURL(file);
+  } else {
+    renderMessage(data, true);
+    socket.emit("chat message", data);
+  }
+
+  msgInput.value = "";
+}
+
+sendBtn.onclick = sendMessage;
+msgInput.onkeydown = e => { if (e.key === "Enter") sendMessage(); };
+
+// ===== CLOSE SETTINGS PANEL =====
+const closeSettingsBtn = document.getElementById("closeSettings");
+if (closeSettingsBtn) closeSettingsBtn.onclick = () => settingsPanel.style.display = "none";
