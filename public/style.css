@@ -519,3 +519,26 @@ body.light .modalBox {
   padding: 0;
   font-size: 0;
 }
+
+.settingItem {
+  margin: 15px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.settingItem input {
+  padding: 8px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  outline: none;
+}
+
+.dangerBtn {
+  background: #e53935;
+  color: white;
+  padding: 10px;
+  border-radius: 10px;
+  border: none;
+  margin-top: 15px;
+}
