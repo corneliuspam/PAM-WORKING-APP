@@ -295,12 +295,18 @@ document.addEventListener("click", (e) => {
   }
 });
 
-// ===== PROFILE → PRIVATE CHAT ENTRY (FINAL SAFE) =====
+// ===== OPEN PRIVATE CHAT =====
 document.addEventListener("click", (e) => {
+  // Profile Message button
   if (e.target.id === "startPrivateChat") {
     const targetUser = localStorage.getItem("activePrivateUser");
     if (!targetUser) return;
 
+    window.location.href = "/private-chat.html";
+  }
+
+  // Floating private chat icon
+  if (e.target.id === "privateChatBtn") {
     window.location.href = "/private-chat.html";
   }
 });
