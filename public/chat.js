@@ -245,3 +245,16 @@ imageInput.addEventListener("change", (e) => {
   // Clear input for next image
   imageInput.value = "";
 });
+
+// ===== PROFILE → PRIVATE CHAT ENTRY =====
+const startPrivateBtn = document.getElementById("startPrivateChat");
+
+if (startPrivateBtn) {
+  startPrivateBtn.onclick = () => {
+    const targetUser = localStorage.getItem("activePrivateUser");
+
+    if (!targetUser || targetUser === profileData.username) return;
+
+    window.location.href = "/private-chat.html";
+  };
+}
