@@ -3,6 +3,9 @@
    ============================ */
 const USE_FIREBASE = true;
 
+// ===== SOCKET CONNECTION =====
+const socket = io({ transports: ["websocket"] });
+
 // ===== DOM ELEMENTS =====
 const chatContainer = document.getElementById("chat");
 const msgInput = document.getElementById("msg");
