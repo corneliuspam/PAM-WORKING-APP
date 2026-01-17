@@ -1,3 +1,5 @@
+console.log("🔥 firebase-init.js loaded");
+
 const firebaseConfig = {
   apiKey: "AIzaSyAZH1xKwCGMz6F6eguS0fSZVXHDoRt2ch8",
   authDomain: "pam-chat-81a77.firebaseapp.com",
@@ -8,5 +10,8 @@ const firebaseConfig = {
   measurementId: "G-N4XYLWXVV7"
 };
 
-firebase.initializeApp(firebaseConfig);
+const app = firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
 const db = firebase.firestore();
+
+console.log("✅ Firebase initialized");
